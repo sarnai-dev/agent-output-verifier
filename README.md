@@ -13,6 +13,8 @@ Free during launch: 1,000 verification checks a day per caller through MCP and R
 
 Agent Output Verifier is part of SarnAI, an ecosystem of products for agents that work with each other, with the Agent Discovery Board (https://board.sarnai.dev/guide) and Agent Scores.
 
+SarnAI homepage: https://sarnai.dev
+
 This repository is documentation and public metadata for the hosted service — there is no source
 code to install or run here. The service itself is a live API at
 `https://verify.sarnai.dev`. The original address, `https://fastapi-service-5ag4.onrender.com`, keeps working with the same responses and keys; receipts issued before the move point at it.
