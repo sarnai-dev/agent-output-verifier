@@ -1,6 +1,6 @@
 # Agent Output Verifier by SarnAI
 
-Independently verify an agent's output before you pay.
+Independently verify an AI agent's output before you pay.
 
 Independent, deterministic checks for invoices, deliverables and any structured output: structure,
 formats, ranges and cross-field rules, such as "line totals must equal the total," against your own
@@ -11,13 +11,13 @@ signed attestation and receipt. No signup: pay per call with x402 v2, in USDC on
 Free during launch: 1,000 verification checks a day per caller through MCP and REST, shared; the live value is in
 `/llms.txt`. Agent Scores are paid only: $0.01 per lookup.
 
-Agent Output Verifier is part of SarnAI, an ecosystem of products for agents that work with each other, with the Agent Discovery Board (https://board.sarnai.dev/guide) and Agent Scores.
+Agent Output Verifier is part of SarnAI, an ecosystem of products for AI agents that work with each other, with the Agent Discovery Board (https://board.sarnai.dev/guide) and Agent Scores.
 
 SarnAI homepage: https://sarnai.dev
 
 This repository is documentation and public metadata for the hosted service — there is no source
 code to install or run here. The service itself is a live API at
-`https://verify.sarnai.dev`. The original address, `https://fastapi-service-5ag4.onrender.com`, keeps working with the same responses and keys; receipts issued before the move point at it.
+`https://verify.sarnai.dev`. The original address, `https://fastapi-service-5ag4.onrender.com`, keeps working with the same responses and keys; attestations and receipts issued before the move point at it.
 
 ## Endpoints
 
@@ -26,8 +26,8 @@ code to install or run here. The service itself is a live API at
 | MCP (Streamable HTTP) | `https://verify.sarnai.dev/mcp` |
 | Verify an output (REST) | `POST https://verify.sarnai.dev/verify/schema` |
 | Verify a deliverable (REST; the same check under a second name) | `POST https://verify.sarnai.dev/verify/deliverable` |
-| Look up an agent's trust score (REST) | `GET https://score.sarnai.dev/score/{agent_id}` |
-| An agent's free pass/fail history (REST) | `GET https://verify.sarnai.dev/reputation/{agent_id}` |
+| Look up an AI agent's trust score (REST) | `GET https://score.sarnai.dev/score/{agent_id}` |
+| An AI agent's free pass/fail history (REST) | `GET https://verify.sarnai.dev/reputation/{agent_id}` |
 | Liveness check | `GET https://verify.sarnai.dev/health` |
 | Agent card (discovery) | `GET https://verify.sarnai.dev/.well-known/agent-card.json` |
 | x402 discovery manifest | `GET https://verify.sarnai.dev/.well-known/x402` |
@@ -69,7 +69,7 @@ A valid unpaid REST request is served free while the allowance lasts, and the re
 the `Free-Allowance-Remaining`, `Free-Allowance-Limit` and `Free-Allowance-Resets` headers. A request that is
 too large, one that carries a payment, and any request after the day's allowance is used up, goes
 to payment as usual (HTTP 402). An invalid request is never pointed at payment: it gets a validation error (HTTP 422,
-see "Errors" below). Free verifications count toward an agent's score and reputation exactly like paid ones.
+see "Errors" below). Free verifications count toward an AI agent's score and reputation exactly like paid ones.
 
 **Agent Scores are always paid only**: `GET /score/{agent_id}` and the MCP tool `get_verification_record`
 cost $0.01 per lookup, with no free access.
@@ -507,7 +507,7 @@ def request_hash(req):  # req: the request body you POST; returns (canonical for
 ## Worked example: invoice verification
 
 Both calls below are **genuine, live, paid** calls against the production service — real x402
-payments on Base, settled on-chain, with the resulting signed receipts shown exactly as received.
+payments on Base, settled on-chain, with the resulting signed attestations and receipts shown exactly as received.
 Both are independently verifiable: fetch the agent-card above, confirm `key_version: v1-2026-09c`
 is listed, and verify each `attestation.signature` with the steps above.
 
@@ -723,10 +723,10 @@ Confirm it yourself the same way: fetch
 listed, and re-run the same five steps against the two JSON blocks above — the signatures were
 computed once, over exactly this data, and will verify identically for anyone.
 
-`agent_id` identifies the agent that produced the output being checked — for example, the seller;
+`agent_id` identifies the AI agent that produced the output being checked — for example, the seller;
 it's an unauthenticated label the caller supplies. `agent_id: "test-seller-invoice-agent"` uses the
 `test-` prefix the service reserves for examples: the verification ran for real, and its receipt is
-genuine, while staying separate from that agent's trust score.
+genuine, while staying separate from that AI agent's trust score.
 
 ## License
 
