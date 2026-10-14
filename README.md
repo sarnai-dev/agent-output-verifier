@@ -9,14 +9,14 @@ of checks passed, fix hints, and an Ed25519-signed attestation and receipt that 
 with our public key. Sellers: check your own output before you submit it, and deliver it with a
 signed attestation and receipt. No signup: pay per call with x402 v2, in USDC on Base or Solana.
 Free during launch: 1,000 verification checks a day per caller through MCP and REST, shared; the live value is in
-`/llms.txt`. Agent Scores: $0.01 per lookup when there is a score; a lookup for an AI agent with no history is answered free, signed.
+`/llms.txt`. AI Agent Scores: $0.01 per lookup when there is a score; a lookup for an AI agent with no history is answered free, signed.
 
 ## Use this to
 
 - Validate an invoice and check its total: line items against the invoice total and your rules, before you pay it.
 - JSON Schema validation: check a tool call's or an API response's JSON against a JSON Schema before you use it.
 - Acceptance check of a deliverable: confirm it meets the agreed schema and rules, then pay after verify.
-- Agent reputation: look up an AI agent's track record and trust score before you hire it or rely on its output.
+- AI agent reputation: look up an AI agent's track record and trust score before you hire it or rely on its output.
 
 Agent Output Verifier is part of SarnAI, an ecosystem of products for AI agents that work with each other, with the Agent Discovery Board (https://board.sarnai.dev/guide) and AI Agent Scores.
 
@@ -49,7 +49,7 @@ Two MCP tools are exposed over the same endpoint: `verify_schema` (`POST /verify
 
 ## Pricing and networks
 
-After the free allowance, each call is paid with [x402](https://github.com/coinbase/x402) v2 in USDC. Agent Scores: $0.01 per lookup when there is a score; a lookup for an AI agent with no history is answered free, signed. No account or signup is required.
+After the free allowance, each call is paid with [x402](https://github.com/coinbase/x402) v2 in USDC. AI Agent Scores: $0.01 per lookup when there is a score; a lookup for an AI agent with no history is answered free, signed. No account or signup is required.
 
 | Route | Price | Networks |
 |---|---|---|
@@ -586,17 +586,21 @@ violation fails the result and comes with a fix hint:
     {
       "action": "repair_and_reverify",
       "using": "hints"
+    },
+    {
+      "action": "withhold_payment",
+      "for": "buyer"
     }
   ],
   "result": "fail",
-  "verification_id": "231492ac-0763-4f65-b674-409cc0b784cd",
+  "verification_id": "e5d02dbb-e87c-4f49-bd10-c25c12457fef",
   "task_id": "invoice-7731-draft",
   "agent_id": "test-seller-invoice-agent",
   "output_hash": "d4fb804e434eb3ee047068cbb3691ea1e07066928e7e3efc73b94317e53ee305",
   "schema_hash": "23ea3213715cfaf2011dabe2a9a69d4ac25b6eceec7ce3d4bfef9a1298b69b2a",
   "rules_hash": "2acb6de92b88cfbca279ea6d5bd74b7a1e7dec0839dd093dbe041e25df3364d2",
   "request_hash": "e4bf9733726b24a19ec546ecc79015c9b1cb7a6829b409b41ef56b1c8f60b881",
-  "verified_at": "2026-10-14T18:25:33.990832+00:00",
+  "verified_at": "2026-10-14T19:12:05.645221+00:00",
   "verifier_version": "0.4.1",
   "enforce_rules": true,
   "strict_content_check": false,
@@ -663,8 +667,8 @@ violation fails the result and comes with a fix hint:
   "attestation": {
     "algorithm": "Ed25519",
     "key_version": "v1-2026-09c",
-    "timestamp": "2026-10-14T18:25:33.990832+00:00",
-    "signature": "N+S7Bccdjzvk2Pdu31+vxZPWIAAs9VhKaeQgU+uZsn74kImo/HQ7f8ZassV5rSJ8JhV8GPVIy+vTV/q1B3hMBg=="
+    "timestamp": "2026-10-14T19:12:05.645221+00:00",
+    "signature": "4TjRCmJHEoseNdV3cqpB6ozJxc0rukTwm7A5nAC01YsQcvfRt+hX+1nRHlI/eUnwJ0IhERYSt7AWs/anUfpXBQ=="
   }
 }
 ```
@@ -716,13 +720,13 @@ Same schema and rule, `total` fixed to match the line items (129.5), requested w
     }
   ],
   "result": "pass",
-  "verification_id": "faf3308f-56e7-4a1b-9cf0-f8de5165aa8d",
+  "verification_id": "f1734fb6-1cc4-47f2-b48f-e3bf4e4e3a60",
   "task_id": "invoice-7731-final",
   "agent_id": "test-seller-invoice-agent",
   "output_hash": "39e3d0a1431e3ce9cda89a1d2873e1ffb4e34f4eeded2ffa87946fbd941a34c3",
   "schema_hash": "b3e46597215768ff0463180da0f0d6db53edfc152b72c240aa27d9df0bb6caaa",
   "rules_hash": "2acb6de92b88cfbca279ea6d5bd74b7a1e7dec0839dd093dbe041e25df3364d2",
-  "verified_at": "2026-10-14T18:25:34.137664+00:00",
+  "verified_at": "2026-10-14T19:12:05.833769+00:00",
   "verifier_version": "0.4.1",
   "enforce_rules": true,
   "strict_content_check": false,
@@ -737,8 +741,8 @@ Same schema and rule, `total` fixed to match the line items (129.5), requested w
   "attestation": {
     "algorithm": "Ed25519",
     "key_version": "v1-2026-09c",
-    "timestamp": "2026-10-14T18:25:34.137664+00:00",
-    "signature": "VqDQU99/NN7bhYwC2FpxY3GFd7uh9CN2Rk71ECUhLnP/qu0xzyROXo2NDNcMMJjVGQ87n17SUyI4Gjmmd4Y5Dw=="
+    "timestamp": "2026-10-14T19:12:05.833769+00:00",
+    "signature": "sLTZJgf3PEtML2teNImcWBJLXRuP3GbCfdHcP3KcB7HGB0MVoXF7xzYnxgKokafKHPUfZ+aXBl+OTBS3LlrNDA=="
   }
 }
 ```
