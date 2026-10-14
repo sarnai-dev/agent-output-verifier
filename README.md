@@ -1,6 +1,6 @@
 # Agent Output Verifier by SarnAI
 
-Independently verify an AI agent's output before you pay.
+Independent verification of AI agent output before you pay.
 
 Independent, deterministic checks for invoices, deliverables and any structured output: structure,
 formats, ranges and cross-field rules, such as "line totals must equal the total," against your own
