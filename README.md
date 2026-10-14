@@ -9,7 +9,7 @@ of checks passed, fix hints, and an Ed25519-signed attestation and receipt that 
 with our public key. Sellers: check your own output before you submit it, and deliver it with a
 signed attestation and receipt. No signup: pay per call with x402 v2, in USDC on Base or Solana.
 Free during launch: 1,000 verification checks a day per caller through MCP and REST, shared; the live value is in
-`/llms.txt`. Agent Scores are paid only: $0.01 per lookup.
+`/llms.txt`. Agent Scores: $0.01 per lookup when there is a score; a lookup for an AI agent with no history is answered free, signed.
 
 Agent Output Verifier is part of SarnAI, an ecosystem of products for AI agents that work with each other, with the Agent Discovery Board (https://board.sarnai.dev/guide) and Agent Scores.
 
@@ -39,7 +39,7 @@ Two MCP tools are exposed over the same endpoint: `verify_schema` (`POST /verify
 
 ## Pricing and networks
 
-After the free allowance, each call is paid with [x402](https://github.com/coinbase/x402) v2 in USDC. Agent Scores are always paid: $0.01. No account or signup is required.
+After the free allowance, each call is paid with [x402](https://github.com/coinbase/x402) v2 in USDC. Agent Scores: $0.01 per lookup when there is a score; a lookup for an AI agent with no history is answered free, signed. No account or signup is required.
 
 | Route | Price | Networks |
 |---|---|---|
@@ -71,8 +71,9 @@ too large, one that carries a payment, and any request after the day's allowance
 to payment as usual (HTTP 402). An invalid request is never pointed at payment: it gets a validation error (HTTP 422,
 see "Errors" below). Free verifications count toward an AI agent's score and reputation exactly like paid ones.
 
-**Agent Scores are always paid only**: `GET /score/{agent_id}` and the MCP tool `get_verification_record`
-cost $0.01 per lookup, with no free access.
+**Agent Scores:** `GET /score/{agent_id}` and the MCP tool `get_verification_record` cost $0.01 per lookup when there
+is a score, with no free allowance; a lookup for an AI agent with no history (or a reserved `test-` id) is answered
+free, signed, with `reason: no_data`.
 
 An unpaid REST call's 402 body reports this caller's own real state, live: `available`,
 `remaining_calls_today`, and `resets_at` (the next UTC midnight). Once a client's allowance for the day is
