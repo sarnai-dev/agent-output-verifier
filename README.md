@@ -1,6 +1,6 @@
 # Agent Output Verifier by SarnAI
 
-Independent verification of AI agent output before you pay.
+Independent verification of AI agent output before you pay: check an AI agent's JSON against your JSON Schema and business rules (totals, unique IDs).
 
 Independent, deterministic checks for invoices, deliverables and any structured output: structure,
 formats, ranges and cross-field rules, such as "line totals must equal the total," against your own
@@ -11,7 +11,14 @@ signed attestation and receipt. No signup: pay per call with x402 v2, in USDC on
 Free during launch: 1,000 verification checks a day per caller through MCP and REST, shared; the live value is in
 `/llms.txt`. Agent Scores: $0.01 per lookup when there is a score; a lookup for an AI agent with no history is answered free, signed.
 
-Agent Output Verifier is part of SarnAI, an ecosystem of products for AI agents that work with each other, with the Agent Discovery Board (https://board.sarnai.dev/guide) and Agent Scores.
+## Use this to
+
+- Validate an invoice and check its total: line items against the invoice total and your rules, before you pay it.
+- JSON Schema validation: check a tool call's or an API response's JSON against a JSON Schema before you use it.
+- Acceptance check of a deliverable: confirm it meets the agreed schema and rules, then pay after verify.
+- Agent reputation: look up an AI agent's track record and trust score before you hire it or rely on its output.
+
+Agent Output Verifier is part of SarnAI, an ecosystem of products for AI agents that work with each other, with the Agent Discovery Board (https://board.sarnai.dev/guide) and AI Agent Scores.
 
 SarnAI homepage: https://sarnai.dev
 
@@ -31,7 +38,10 @@ code to install or run here. The service itself is a live API at
 | Liveness check | `GET https://verify.sarnai.dev/health` |
 | Agent card (discovery) | `GET https://verify.sarnai.dev/.well-known/agent-card.json` |
 | x402 discovery manifest | `GET https://verify.sarnai.dev/.well-known/x402` |
-| llms.txt | `GET https://verify.sarnai.dev/llms.txt` |
+| llms.txt (and `llms-full.txt` with worked examples) | `GET https://verify.sarnai.dev/llms.txt` |
+| Same agent card at the older A2A path | `GET https://verify.sarnai.dev/.well-known/agent.json` |
+| API catalog (RFC 9727) | `GET https://verify.sarnai.dev/.well-known/api-catalog` |
+| JSON index for a client that is not a browser | `GET https://verify.sarnai.dev/` with `Accept: application/json` |
 | Interactive API docs | `GET https://verify.sarnai.dev/docs` |
 
 Two MCP tools are exposed over the same endpoint: `verify_schema` (`POST /verify/schema`) and
@@ -45,7 +55,7 @@ After the free allowance, each call is paid with [x402](https://github.com/coinb
 |---|---|---|
 | `POST /verify/schema` | $0.02 USDC | Base (`eip155:8453`), Solana (`solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`) |
 | `POST /verify/deliverable` | $0.02 USDC | Base (`eip155:8453`), Solana (`solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`) |
-| `GET /score/{agent_id}` | $0.01 USDC | Base (`eip155:8453`), Solana (`solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`) |
+| `GET /score/{agent_id}` | $0.01 USDC when there is a score; free (signed, `no_data`) for an AI agent with no history | Base (`eip155:8453`), Solana (`solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`) |
 
 `/.well-known/x402` and the `Payment-Required` header of a live 402 response always carry the
 exact live prices, pay-to addresses and asset addresses — treat them as the source of truth, and
@@ -507,8 +517,10 @@ def request_hash(req):  # req: the request body you POST; returns (canonical for
 
 ## Worked example: invoice verification
 
-Both calls below are **genuine, live, paid** calls against the production service — real x402
-payments on Base, settled on-chain, with the resulting signed attestations and receipts shown exactly as received.
+Both calls below are **genuine, live calls to https://verify.sarnai.dev** (the production service), with the resulting
+signed attestations and receipts shown exactly as received. They used the free allowance and a reserved `test-`
+`agent_id`, so nothing was charged and nothing was recorded. The same two requests were first run as paid x402 calls
+on Base; that settlement evidence is kept under each result.
 Both are independently verifiable: fetch the agent-card above, confirm `key_version: v1-2026-09c`
 is listed, and verify each `attestation.signature` with the steps above.
 
@@ -566,20 +578,25 @@ violation fails the result and comes with a fix hint:
 {
   "summary": {
     "result": "fail",
-    "blocking_checks": ["consistency:sum_equals"]
+    "blocking_checks": [
+      "consistency:sum_equals"
+    ]
   },
   "next_actions": [
-    { "action": "repair_and_reverify", "using": "hints" }
+    {
+      "action": "repair_and_reverify",
+      "using": "hints"
+    }
   ],
   "result": "fail",
-  "verification_id": "28afb453-7c39-4993-a9c4-fcade1b7924f",
+  "verification_id": "231492ac-0763-4f65-b674-409cc0b784cd",
   "task_id": "invoice-7731-draft",
   "agent_id": "test-seller-invoice-agent",
   "output_hash": "d4fb804e434eb3ee047068cbb3691ea1e07066928e7e3efc73b94317e53ee305",
   "schema_hash": "23ea3213715cfaf2011dabe2a9a69d4ac25b6eceec7ce3d4bfef9a1298b69b2a",
   "rules_hash": "2acb6de92b88cfbca279ea6d5bd74b7a1e7dec0839dd093dbe041e25df3364d2",
   "request_hash": "e4bf9733726b24a19ec546ecc79015c9b1cb7a6829b409b41ef56b1c8f60b881",
-  "verified_at": "2026-10-01T01:01:09.606993+00:00",
+  "verified_at": "2026-10-14T18:25:33.990832+00:00",
   "verifier_version": "0.4.1",
   "enforce_rules": true,
   "strict_content_check": false,
@@ -620,27 +637,39 @@ violation fails the result and comes with a fix hint:
   ],
   "hints_total": 1,
   "hints_omitted": 0,
-  "schema_compliance": { "ratio": 1.0, "passed": 22, "total": 22 },
-  "integrity_checks": { "ratio": 0.875, "passed": 7, "total": 8 },
-  "overall": { "ratio": 0.966667, "passed": 29, "total": 30 },
+  "schema_compliance": {
+    "ratio": 1.0,
+    "passed": 22,
+    "total": 22
+  },
+  "integrity_checks": {
+    "ratio": 0.875,
+    "passed": 7,
+    "total": 8
+  },
+  "overall": {
+    "ratio": 0.966667,
+    "passed": 29,
+    "total": 30
+  },
   "verify": {
-    "public_key_url": "https://fastapi-service-5ag4.onrender.com/.well-known/agent-card.json",
+    "public_key_url": "https://verify.sarnai.dev/.well-known/agent-card.json",
     "key_version": "v1-2026-09c",
     "canonicalization": "RFC 8785 (JCS)",
     "hash_algorithm": "SHA-256",
     "service": "Agent Output Verifier",
-    "mcp": "https://fastapi-service-5ag4.onrender.com/mcp"
+    "mcp": "https://verify.sarnai.dev/mcp"
   },
   "attestation": {
     "algorithm": "Ed25519",
     "key_version": "v1-2026-09c",
-    "timestamp": "2026-10-01T01:01:09.606993+00:00",
-    "signature": "8UexIObSAwQxjj8/rbEpLRgbYY6XO+wg5+b0D8I3BRfbOxl+ouwcKNPE/hp+9p37Tm2wwdmCqPjBgOMLGQtGAQ=="
+    "timestamp": "2026-10-14T18:25:33.990832+00:00",
+    "signature": "N+S7Bccdjzvk2Pdu31+vxZPWIAAs9VhKaeQgU+uZsn74kImo/HQ7f8ZassV5rSJ8JhV8GPVIy+vTV/q1B3hMBg=="
   }
 }
 ```
 
-**Payment evidence:** $0.02 USDC on Base, settled on-chain —
+**Payment evidence (the earlier paid run of this request):** $0.02 USDC on Base, settled on-chain —
 [`0x4cb755c71413ed5419215d2d7445c34e19be79d9f15b4046802656165b774897`](https://basescan.org/tx/0x4cb755c71413ed5419215d2d7445c34e19be79d9f15b4046802656165b774897).
 
 ### 2. Corrected invoice — passes (`detail: "compact"`)
@@ -677,33 +706,39 @@ Same schema and rule, `total` fixed to match the line items (129.5), requested w
     "blocking_checks": []
   },
   "next_actions": [
-    { "action": "attach_receipt", "for": "seller" },
-    { "action": "proceed_to_payment", "for": "buyer" }
+    {
+      "action": "attach_receipt",
+      "for": "seller"
+    },
+    {
+      "action": "proceed_to_payment",
+      "for": "buyer"
+    }
   ],
   "result": "pass",
-  "verification_id": "96b4f722-04c3-47c7-8708-5bba97fd18b5",
+  "verification_id": "faf3308f-56e7-4a1b-9cf0-f8de5165aa8d",
   "task_id": "invoice-7731-final",
   "agent_id": "test-seller-invoice-agent",
   "output_hash": "39e3d0a1431e3ce9cda89a1d2873e1ffb4e34f4eeded2ffa87946fbd941a34c3",
-  "schema_hash": "23ea3213715cfaf2011dabe2a9a69d4ac25b6eceec7ce3d4bfef9a1298b69b2a",
+  "schema_hash": "b3e46597215768ff0463180da0f0d6db53edfc152b72c240aa27d9df0bb6caaa",
   "rules_hash": "2acb6de92b88cfbca279ea6d5bd74b7a1e7dec0839dd093dbe041e25df3364d2",
-  "verified_at": "2026-10-01T01:01:15.158857+00:00",
+  "verified_at": "2026-10-14T18:25:34.137664+00:00",
   "verifier_version": "0.4.1",
   "enforce_rules": true,
   "strict_content_check": false,
   "verify": {
-    "public_key_url": "https://fastapi-service-5ag4.onrender.com/.well-known/agent-card.json",
+    "public_key_url": "https://verify.sarnai.dev/.well-known/agent-card.json",
     "key_version": "v1-2026-09c",
     "canonicalization": "RFC 8785 (JCS)",
     "hash_algorithm": "SHA-256",
     "service": "Agent Output Verifier",
-    "mcp": "https://fastapi-service-5ag4.onrender.com/mcp"
+    "mcp": "https://verify.sarnai.dev/mcp"
   },
   "attestation": {
     "algorithm": "Ed25519",
     "key_version": "v1-2026-09c",
-    "timestamp": "2026-10-01T01:01:15.158857+00:00",
-    "signature": "ri1AEl12DoZMTKBX8V5hfuD9jOWd+BLXIciqiX1JoSHJy8iDJKKSdsJmjpQUHTkbVMxDGpNwMNmc6X9zHaSVDw=="
+    "timestamp": "2026-10-14T18:25:34.137664+00:00",
+    "signature": "VqDQU99/NN7bhYwC2FpxY3GFd7uh9CN2Rk71ECUhLnP/qu0xzyROXo2NDNcMMJjVGQ87n17SUyI4Gjmmd4Y5Dw=="
   }
 }
 ```
@@ -712,15 +747,15 @@ The compact shape keeps the summary, receipt fields, `verify` and `attestation`;
 `errors`, `errors_detail`, `flags`, `hints` and the three scores stay in the full shape (see
 `detail` above).
 
-**Payment evidence:** $0.02 USDC on Base, settled on-chain —
+**Payment evidence (the earlier paid run of this request):** $0.02 USDC on Base, settled on-chain —
 [`0xaa9161736ac410b6ac9ccc478780aa2feaa6d2cf02af4c51855e099c14499079`](https://basescan.org/tx/0xaa9161736ac410b6ac9ccc478780aa2feaa6d2cf02af4c51855e099c14499079).
 
 ### Verifying these two receipts yourself
 
 Both responses above were checked against the live agent-card's public key for `v1-2026-09c`
-before being included here, using the steps in [Verifying a receipt](#verifying-a-receipt-step-by-step).
+(from https://verify.sarnai.dev) before being included here, using the steps in [Verifying a receipt](#verifying-a-receipt-step-by-step).
 Confirm it yourself the same way: fetch
-`https://fastapi-service-5ag4.onrender.com/.well-known/agent-card.json`, confirm `v1-2026-09c` is
+`https://verify.sarnai.dev/.well-known/agent-card.json`, confirm `v1-2026-09c` is
 listed, and re-run the same five steps against the two JSON blocks above — the signatures were
 computed once, over exactly this data, and will verify identically for anyone.
 
