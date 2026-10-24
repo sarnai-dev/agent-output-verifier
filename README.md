@@ -8,7 +8,7 @@ requirements, written in standard JSON Schema plus optional rules. Returns pass/
 of checks passed, fix hints, and an Ed25519-signed attestation and receipt that anyone can verify
 with our public key. Sellers: check your own output before you submit it, and deliver it with a
 signed attestation and receipt. No signup: pay per call with x402 v2, in USDC on Base or Solana.
-Free during launch: 1,000 verification checks a day per caller through MCP and REST, shared; the live value is in
+1,000 free checks a day per caller, then $0.02 per check (x402, USDC on Base or Solana). The allowance is shared by MCP and REST; the live value is in
 `/llms.txt`. AI Agent Scores: $0.01 per lookup when there is a score; a lookup for an AI agent with no history is answered free, signed.
 
 ## Use this to
@@ -70,7 +70,7 @@ either way.
 
 ## Free allowance
 
-Verification is **free during launch**. Each client, identified by request IP address (there is no sign-up
+Verification has a free allowance: 1,000 free checks a day per caller, then $0.02 per check (x402, USDC on Base or Solana). Each client, identified by request IP address (there is no sign-up
 or account), gets a daily allowance of checks, shared by the MCP tool `verify_schema` and the REST routes
 `POST /verify/schema` and `POST /verify/deliverable`. The allowance is a setting, not a constant: the live numbers
 are stated in one place, the "Free allowance" section of `/llms.txt`.
@@ -102,8 +102,7 @@ used up, `available` turns `false` and the body carries `"code": "free_trial_exh
     "resets_at": "<next UTC midnight>",
     "client": "identified by request IP address; the same address's REST and MCP verification calls share one allowance",
     "rest_free": true,
-    "launch": true,
-    "message": "Free during launch. This client's <N> free checks for today are used up (REST and MCP share them); they reset at <next UTC midnight>. Payment applies until then.",
+    "message": "This client's <N> free checks for today are used up (REST and MCP share them); they reset at <next UTC midnight>. Payment applies until then.",
     "code": "free_trial_exhausted"
   }
 }
@@ -131,7 +130,7 @@ with SarnAIClient() as sarnai:
     print(result.passed, result.hints)
 ```
 
-Verification is free during launch within the daily allowance above; beyond it the service answers 402 and the client raises
+Verification is free within the daily allowance above; beyond it the service answers 402 and the client raises
 `PaymentRequiredError`.
 
 - PyPI: <https://pypi.org/project/sarnai/>

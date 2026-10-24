@@ -19,7 +19,7 @@
       ]
     }
   ],
-  "version": "0.5.7",
+  "version": "0.5.8",
   "websiteUrl": "https://github.com/sarnai-dev/agent-output-verifier",
   "repository": {
     "url": "https://github.com/sarnai-dev/agent-output-verifier",
@@ -34,7 +34,7 @@
   "_meta": {
     "io.modelcontextprotocol.registry/publisher-provided": {
       "agentCardUrl": "https://verify.sarnai.dev/.well-known/agent-card.json",
-      "payment": "Verification is free during launch within a daily allowance per caller, through MCP and REST (the live allowance is stated in the \"Free allowance\" section of https://verify.sarnai.dev/llms.txt). Agent Scores (get_verification_record) are paid only: $0.01 per lookup. After the allowance, each call requires an x402 payment (USDC on Base and Solana) in the MCP request's _meta under \"x402/payment\". Exact prices, networks and the pay-to address are in the agent-card."
+      "payment": "1,000 free checks a day per caller, then $0.02 per check (x402, USDC on Base or Solana). The live allowance is stated in the \"Free allowance\" section of https://verify.sarnai.dev/llms.txt. AI Agent Scores (get_verification_record): $0.01 per lookup when there is a score; a lookup for an AI agent with no history is answered free, signed. After the allowance, each call requires an x402 payment (USDC on Base and Solana) in the MCP request's _meta under \"x402/payment\". Exact prices, networks and the pay-to address are in the agent-card."
     }
   }
 }
