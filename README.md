@@ -33,7 +33,7 @@ code to install or run here. The service itself is a live API at
 | MCP (Streamable HTTP) | `https://verify.sarnai.dev/mcp` |
 | Verify an output (REST) | `POST https://verify.sarnai.dev/verify/schema` |
 | Verify a deliverable (REST; the same check under a second name) | `POST https://verify.sarnai.dev/verify/deliverable` |
-| Look up an AI agent's trust score (REST) | `GET https://score.sarnai.dev/score/{agent_id}` |
+| Look up an AI agent's trust score (REST) | `GET https://score.sarnai.dev/score/{agent_id}`, for example `GET https://score.sarnai.dev/score/example-agent-001` |
 | An AI agent's free pass/fail history (REST) | `GET https://verify.sarnai.dev/reputation/{agent_id}` |
 | Liveness check | `GET https://verify.sarnai.dev/health` |
 | Agent card (discovery) | `GET https://verify.sarnai.dev/.well-known/agent-card.json` |
@@ -55,7 +55,7 @@ After the free allowance, each call is paid with [x402](https://github.com/coinb
 |---|---|---|
 | `POST /verify/schema` | $0.02 USDC | Base (`eip155:8453`), Solana (`solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`) |
 | `POST /verify/deliverable` | $0.02 USDC | Base (`eip155:8453`), Solana (`solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`) |
-| `GET /score/{agent_id}` | $0.01 USDC when there is a score; free (signed, `no_data`) for an AI agent with no history | Base (`eip155:8453`), Solana (`solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`) |
+| `GET /score/{agent_id}` (for example `/score/example-agent-001`) | $0.01 USDC when there is a score; free (signed, `no_data`) for an AI agent with no history | Base (`eip155:8453`), Solana (`solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp`) |
 
 `/.well-known/x402` and the `Payment-Required` header of a live 402 response always carry the
 exact live prices, pay-to addresses and asset addresses — treat them as the source of truth, and
@@ -83,7 +83,9 @@ see "Errors" below). Free verifications count toward an AI agent's score and rep
 
 **Agent Scores:** `GET /score/{agent_id}` and the MCP tool `get_verification_record` cost $0.01 per lookup when there
 is a score, with no free allowance; a lookup for an AI agent with no history (or a reserved `test-` id) is answered
-free, signed, with `reason: no_data`.
+free, signed, with `reason: no_data`. The template is called with the id of a real AI agent, for example
+`GET /score/example-agent-001`; a request whose agent_id is the placeholder itself (`{agent_id}`, `:agent_id`, `<agent_id>`)
+is refused with a `400` (`placeholder_agent_id`) before any payment is asked for, and nothing is charged.
 
 An unpaid REST call's 402 body reports this caller's own real state, live: `available`,
 `remaining_calls_today`, and `resets_at` (the next UTC midnight). Once a client's allowance for the day is
